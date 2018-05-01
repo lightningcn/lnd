@@ -39,25 +39,25 @@ set_default() {
 }
 
 # Set default variables if needed.
+RPCHOST=$(set_default "$RPCHOST" "127.0.0.1:43782")
 RPCUSER=$(set_default "$RPCUSER" "devuser")
 RPCPASS=$(set_default "$RPCPASS" "devpass")
+ZMQPATH=$(set_default "$ZMQPATH" "tcp://127.0.0.1:28332")
 DEBUG=$(set_default "$DEBUG" "debug")
-NETWORK=$(set_default "$NETWORK" "simnet")
+NETWORK=$(set_default "$NETWORK" "regtest")
 CHAIN=$(set_default "$CHAIN" "bitcoin")
-BACKEND="btcd"
-if [[ "$CHAIN" == "litecoin" ]]; then
-    BACKEND="ltcd"
-fi
+BACKEND=$(set_default "$BACKEND" "bitcoind")
 
 exec lnd \
+    --no-macaroons \
     --noencryptwallet \
     --logdir="/data" \
     "--$CHAIN.active" \
     "--$CHAIN.$NETWORK" \
-    "--$CHAIN.node"="btcd" \
-    "--$BACKEND.rpccert"="/rpc/rpc.cert" \
-    "--$BACKEND.rpchost"="blockchain" \
+    "--$CHAIN.node"="$BACKEND" \
+    "--$BACKEND.rpchost"="$RPCHOST" \
     "--$BACKEND.rpcuser"="$RPCUSER" \
     "--$BACKEND.rpcpass"="$RPCPASS" \
+    "--$BACKEND.zmqpath"="$ZMQPATH" \
     --debuglevel="$DEBUG" \
     "$@"
