@@ -696,17 +696,16 @@ func loadConfig() (*config, error) {
 		cfg.Listeners = append(cfg.Listeners, addr)
 	}
 
-	// For each of the RPC listeners (REST+gRPC), we'll ensure that users
-	// have specified a safe combo for authentication. If not, we'll bail
-	// out with an error.
-	err := enforceSafeAuthentication(cfg.RPCListeners, !cfg.NoMacaroons)
+	// Removing enforcing of --no-macaroons since we will package `lnd` in
+	// docker container that we need to be able to access from BtcPayServer
+	/*err := enforceSafeAuthentication(cfg.RPCListeners, !cfg.NoMacaroons)
 	if err != nil {
 		return nil, err
 	}
 	err = enforceSafeAuthentication(cfg.RESTListeners, !cfg.NoMacaroons)
 	if err != nil {
 		return nil, err
-	}
+	}*/
 
 	// Remove all Listeners if listening is disabled.
 	if cfg.DisableListen {
