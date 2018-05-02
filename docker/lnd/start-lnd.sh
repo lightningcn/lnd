@@ -59,5 +59,6 @@ exec lnd \
     "--$BACKEND.rpcuser"="$RPCUSER" \
     "--$BACKEND.rpcpass"="$RPCPASS" \
     "--$BACKEND.zmqpath"="$ZMQPATH" \
+    "--restlisten=0.0.0.0:8080" \
     --debuglevel="$DEBUG" \
     "$@"
