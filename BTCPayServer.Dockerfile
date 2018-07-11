@@ -25,10 +25,18 @@ RUN apk --no-cache add \
 
 ENV LND_DATA /data
 ENV LND_BITCOIND /deps/.bitcoin
+ENV LND_LITECOIND /deps/.litecoin
 ENV LND_BTCD /deps/.btcd
 
-RUN mkdir "$LND_DATA" && mkdir "/deps" && mkdir "$LND_BITCOIND" && mkdir "$LND_BTCD" && \
-    ln -sfn "$LND_DATA" /root/.lnd && ln -sfn "$LND_BITCOIND" /root/.bitcoin && ln -sfn "$LND_BTCD" /root/.btcd
+RUN mkdir "$LND_DATA" && \
+    mkdir "/deps" && \
+    mkdir "$LND_BITCOIND" && \
+    mkdir "$LND_LITECOIND" && \
+    mkdir "$LND_BTCD" && \
+    ln -sfn "$LND_DATA" /root/.lnd && \
+    ln -sfn "$LND_BITCOIND" /root/.bitcoin && \
+    ln -sfn "$LND_LITECOIND" /root/.litecoin && \
+    ln -sfn "$LND_BTCD" /root/.btcd
 
 # Define a root volume for data persistence.
 VOLUME /data
