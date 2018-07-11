@@ -49,6 +49,7 @@ if [[ "$1" == "lnd" || "$1" == "lncli" ]]; then
 
 	ln -sfn "$LND_DATA" /root/.lnd
     ln -sfn "$LND_BITCOIND" /root/.bitcoin
+    ln -sfn "$LND_LITECOIND" /root/.litecoin
     ln -sfn "$LND_BTCD" /root/.btcd
 	exec "$@"
 else
