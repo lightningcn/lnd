@@ -15,8 +15,21 @@ COPY . .
 RUN make \
 &&  make install
 
+FROM microsoft/dotnet:2.1.300-sdk-alpine3.7 AS dotnetbuilder
+
+RUN apk add --no-cache git
+
+WORKDIR /source
+
+RUN git clone https://github.com/dgarage/NBXplorer && cd NBXplorer && git checkout 4be7fc4cebadb5da4fadd4208f63b76c13bafd89
+
+# Cache some dependencies
+RUN cd NBXplorer/NBXplorer.NodeWaiter && dotnet restore && cd ..
+RUN cd NBXplorer/NBXplorer.NodeWaiter && \
+    dotnet publish --output /app/ --configuration Release
+
 # Start a new, final image.
-FROM alpine as final
+FROM microsoft/dotnet:2.1-runtime-alpine3.7 as final
 
 # Add bash and ca-certs, for quality of life and SSL-related reasons.
 RUN apk --no-cache add \
@@ -44,6 +57,7 @@ VOLUME /data
 # Copy the binaries from the builder image.
 COPY --from=builder /go/bin/lncli /bin/
 COPY --from=builder /go/bin/lnd /bin/
+COPY --from=dotnetbuilder /app /opt/NBXplorer.NodeWaiter
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 # Specify the start command and entrypoint as the lnd daemon.

@@ -39,11 +39,18 @@ if [[ "$1" == "lnd" || "$1" == "lncli" ]]; then
         if [[ $ENV && $NETWORK ]]; then
             echo "
             $NETWORK.active=1
-            $NETWORK.$LND_ENVIRONMENT=1
+            $NETWORK.$ENV=1
             " >> "$LND_DATA/lnd.conf"
-            echo "Added $NETWORK.active and $NETWORK.$LND_ENVIRONMENT to config file $LND_DATA/lnd.conf"
+            echo "Added $NETWORK.active and $NETWORK.$ENV to config file $LND_DATA/lnd.conf"
         else
             echo "LND_CHAIN or LND_ENVIRONMENT is not set correctly"
+        fi
+
+        if [[ $LND_EXPLORERURL ]]; then
+            # We need to do that because LND behave weird if it starts at same time as bitcoin core, or if the node is not synched
+            echo "Waiting for the node to start and sync"
+            dotnet /opt/NBXplorer.NodeWaiter/NBXplorer.NodeWaiter.dll --chains "$LND_CHAIN" --network "$LND_ENVIRONMENT" --explorerurl "$LND_EXPLORERURL"
+            echo "Node synched"
         fi
     fi
 
