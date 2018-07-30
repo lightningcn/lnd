@@ -21,7 +21,7 @@ RUN apk add --no-cache git
 
 WORKDIR /source
 
-RUN git clone https://github.com/dgarage/NBXplorer && cd NBXplorer && git checkout 4be7fc4cebadb5da4fadd4208f63b76c13bafd89
+RUN git clone https://github.com/dgarage/NBXplorer && cd NBXplorer && git checkout 9babc8364dbcba80b5cb613e2a88a93330f1f7a6
 
 # Cache some dependencies
 RUN cd NBXplorer/NBXplorer.NodeWaiter && dotnet restore && cd ..
