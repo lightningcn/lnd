@@ -29,7 +29,7 @@ RUN cd NBXplorer/NBXplorer.NodeWaiter && \
     dotnet publish --output /app/ --configuration Release
 
 # Start a new, final image.
-FROM microsoft/dotnet:2.1.5-aspnetcore-runtime-alpine3.7 as final
+FROM microsoft/dotnet:2.1.5-runtime-alpine3.7 as final
 
 # Add bash and ca-certs, for quality of life and SSL-related reasons.
 RUN apk --no-cache add \
