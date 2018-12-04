@@ -15,13 +15,13 @@ COPY . .
 RUN make \
 &&  make install
 
-FROM microsoft/dotnet:2.1.403-sdk-alpine3.7 AS dotnetbuilder
+FROM microsoft/dotnet:2.1.500-sdk-alpine3.7 AS dotnetbuilder
 
 RUN apk add --no-cache git
 
 WORKDIR /source
 
-RUN git clone https://github.com/dgarage/NBXplorer && cd NBXplorer && git checkout 88a8db8be3911f59b4b6109845b547368c5f02fb
+RUN git clone https://github.com/dgarage/NBXplorer && cd NBXplorer && git checkout v2.0.0.2
 
 # Cache some dependencies
 RUN cd NBXplorer/NBXplorer.NodeWaiter && dotnet restore && cd ..
@@ -29,7 +29,7 @@ RUN cd NBXplorer/NBXplorer.NodeWaiter && \
     dotnet publish --output /app/ --configuration Release
 
 # Start a new, final image.
-FROM microsoft/dotnet:2.1.5-runtime-alpine3.7 as final
+FROM microsoft/dotnet:2.1.6-runtime-alpine3.7 as final
 
 # Add bash and ca-certs, for quality of life and SSL-related reasons.
 RUN apk --no-cache add \
