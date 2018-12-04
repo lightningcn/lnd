@@ -29,7 +29,7 @@ jobs:
             sudo apt install -y qemu qemu-user-static qemu-user binfmt-support
 
             sudo cp /usr/bin/qemu-arm-static "qemu-arm-static"
-
+            sed -i -e 's/#EnableQEMU //g' "$DOCKERHUB_DOCKEFILE"
             sudo docker build --pull -t $DOCKERHUB_REPO:$LATEST_TAG-arm32v7 -f linuxarm32v7.Dockerfile .
             sudo docker login --username=$DOCKERHUB_USER --password=$DOCKERHUB_PASS
             sudo docker push $DOCKERHUB_REPO:$LATEST_TAG-arm32v7
