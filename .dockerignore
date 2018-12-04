@@ -1,2 +1,4 @@
 Dockerfile
-BTCPayServer.Dockerfile
+linuxamd64.Dockerfile
+linuxarm32v7.Dockerfile
+.circleci/

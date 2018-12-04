@@ -31,6 +31,10 @@ RUN cd NBXplorer/NBXplorer.NodeWaiter && \
 # Start a new, final image.
 FROM microsoft/dotnet:2.1.6-runtime-alpine3.7 as final
 
+# Force Go to use the cgo based DNS resolver. This is required to ensure DNS
+# queries required to connect to linked containers succeed.
+ENV GODEBUG netdns=cgo
+
 # Add bash and ca-certs, for quality of life and SSL-related reasons.
 RUN apk --no-cache add \
     bash \
