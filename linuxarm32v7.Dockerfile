@@ -1,4 +1,4 @@
-FROM golang:stretch as builder
+FROM golang:1.10-stretch as builder
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
@@ -6,7 +6,7 @@ ENV GODEBUG netdns=cgo
 
 # Install dependencies and build the binaries.
 RUN apt-get -y update && apt-get -y install git make
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+RUN curl https://raw.githubusercontent.com/golang/dep/v0.5.0/install.sh | sh
 ENV GOARM=7	GOARCH=arm
 WORKDIR /go/src/github.com/lightningnetwork/lnd
 COPY . .
