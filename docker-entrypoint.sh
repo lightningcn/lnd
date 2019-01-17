@@ -45,13 +45,6 @@ if [[ "$1" == "lnd" || "$1" == "lncli" ]]; then
         else
             echo "LND_CHAIN or LND_ENVIRONMENT is not set correctly"
         fi
-
-        if [[ $LND_EXPLORERURL ]]; then
-            # We need to do that because LND behave weird if it starts at same time as bitcoin core, or if the node is not synched
-            echo "Waiting for the node to start and sync"
-            dotnet /opt/NBXplorer.NodeWaiter/NBXplorer.NodeWaiter.dll --chains "$LND_CHAIN" --network "$LND_ENVIRONMENT" --explorerurl "$LND_EXPLORERURL"
-            echo "Node synched"
-        fi
     fi
 
 	ln -sfn "$LND_DATA" /root/.lnd
@@ -63,7 +56,10 @@ if [[ "$1" == "lnd" || "$1" == "lncli" ]]; then
         echo "LTC on testnet is not supported, let's sleep instead!"
         while true; do sleep 86400; done
     else
-        exec "$@"
+        # NBXplorer.NodeWaiter.dll is a wrapper which wait the full node to be fully synced before starting LND
+        # it also correctly handle SIGINT and SIGTERM so this container can die properly if SIGKILL or SIGTERM is sent
+        exec dotnet /opt/NBXplorer.NodeWaiter/NBXplorer.NodeWaiter.dll --chains "$LND_CHAIN" --network "$LND_ENVIRONMENT" --explorerurl "$LND_EXPLORERURL" -- \
+             $@
     fi
 else
 	exec "$@"
