@@ -299,6 +299,7 @@
   ]
   pruneopts = "UT"
   revision = "cdab10132e8c6e4a3ffd112dba54791946d28906"
+  source = "github.com/ltcsuite-archive/ltcd"
 
 [[projects]]
   digest = "1:a0bf6f18ffeb4a45fd00d5eb16d918769bbe0e2dc7824e95abf05a3306f60102"
