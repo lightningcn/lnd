@@ -357,8 +357,28 @@ func lndMain() error {
 		srvrLog.Errorf("unable to start RPC server: %v", err)
 		return err
 	}
-	if err := rpcServer.Start(); err != nil {
-		return err
+	for _, restEndpoint := range cfg.RESTListeners {
+		var (
+			lis net.Listener
+			err error
+		)
+		if !cfg.DisableTLS {
+			lis, err = lncfg.TLSListenOnAddress(restEndpoint, tlsConf)
+		} else {
+			lis, err = net.Listen("tcp", restEndpoint.String())
+		}
+		if err != nil {
+			ltndLog.Errorf(
+				"gRPC proxy unable to listen on %s",
+				restEndpoint,
+			)
+			return err
+		}
+		defer lis.Close()
+		go func() {
+			rpcsLog.Infof("gRPC proxy started at %s", lis.Addr())
+			http.Serve(lis, mux)
+		}()
 	}
 	defer rpcServer.Stop()
 
@@ -586,7 +606,7 @@ func genCertPair(certFile, keyFile string) error {
 
 		KeyUsage: x509.KeyUsageKeyEncipherment |
 			x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
-		IsCA:                  true, // so can sign self.
+		IsCA: true, // so can sign self.
 		BasicConstraintsValid: true,
 
 		DNSNames:    dnsNames,
