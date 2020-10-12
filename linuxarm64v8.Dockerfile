@@ -1,17 +1,19 @@
-FROM golang:1.12.4-stretch as builder
+FROM golang:1.13-stretch as builder
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
 ENV GODEBUG netdns=cgo
 
-# Install dependencies and build the binaries.
+# Install dependencies and install/build lnd.
 RUN apt-get -y update && apt-get -y install git make build-essential qemu qemu-user-static qemu-user binfmt-support
 ENV GOARM=	GOARCH=arm64
-WORKDIR /go/src/github.com/lightningnetwork/lnd
-COPY . .
 
-RUN make \
-&&  make install
+# Copy in the local repository to build from.
+COPY . /go/src/github.com/lightningnetwork/lnd
+
+RUN cd /go/src/github.com/lightningnetwork/lnd \
+&&  make \
+&&  make install tags="signrpc walletrpc chainrpc invoicesrpc"
 
 # Force the builder machine to take make an arm runtime image. This is fine as long as the builder does not run any program
 FROM arm64v8/debian:stretch-slim as final
